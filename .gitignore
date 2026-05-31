@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+*.so
+
+# Virtual environments
+venv/
+env/
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+uploads/
+outputs/
+artifacts/
+*.mp4
+*.avi
+*.mov
+
+# Model files
+*.pt
+*.onnx
+*.xml
+*.bin
+
+# Node
+node_modules/
+frontend/dist/
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+
+# Alembic
+alembic/versions/__pycache__/
+
+# pytest
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# W&B
+wandb/

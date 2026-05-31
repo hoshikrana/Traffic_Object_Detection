@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+/* Custom dark scrollbar */
+:root {
+  --color-bg-base: #030712;
+  --color-bg-card: #111827;
+  --color-bg-border: #1f2937;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #374151 #111827;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: #111827;
+}
+*::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #030712;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Count-up animation for numbers */
+.font-mono {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pulse animation for critical badge */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 12px 4px rgba(239, 68, 68, 0.3); }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Smooth progress bar transition */
+.progress-bar-fill {
+  transition: width 0.3s ease-out;
+}
+
+/* Video player custom range slider */
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: #374151;
+  border-radius: 2px;
+  outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #10b981;
+  cursor: pointer;
+  border: 2px solid #030712;
+}
+input[type=range]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #10b981;
+  cursor: pointer;
+  border: 2px solid #030712;
+}
+
+/* Glassmorphism card effect */
+.glass-card {
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}

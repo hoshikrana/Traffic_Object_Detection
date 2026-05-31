@@ -1,0 +1,65 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install ruff
+      - run: ruff check . && ruff format --check .
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: timescale/timescaledb:latest-pg16
+        env:
+          POSTGRES_DB: traffic
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql+asyncpg://admin:secret@localhost:5432/traffic
+      REDIS_URL: redis://localhost:6379
+      MODEL_PATH: ./artifacts/
+      UPLOAD_DIR: ./uploads
+      OUTPUT_DIR: ./outputs
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r backend/requirements.txt pytest pytest-asyncio pytest-cov httpx
+      - run: mkdir -p uploads outputs artifacts
+      - run: cd backend && alembic upgrade head
+      - run: cd backend && pytest tests/ -v --cov=. --cov-report=xml
+      - uses: codecov/codecov-action@v4
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build ./backend -t traffic-backend:ci
