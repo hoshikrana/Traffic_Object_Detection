@@ -156,6 +156,8 @@ async def main() -> None:
 
     # 4. Frame processing loop
     frame_idx = 0
+    last_detections = []
+    last_analytics = {}
 
     with Progress(
         SpinnerColumn(),
@@ -180,7 +182,20 @@ async def main() -> None:
 
             # Skip frames to maintain processing speed
             if frame_idx % args.skip != 0:
-                writer.write(frame)  # write unannotated to keep video length
+                if last_detections:
+                    # Draw last known detections/analytics to prevent bounding boxes from flickering/buffering
+                    annotated = annotator.draw(
+                        frame.copy(),
+                        last_detections,
+                        analytics_engine.track_positions,
+                        analytics_engine.track_speeds,
+                        analytics_engine.track_classes,
+                        last_analytics,
+                        class_names=model_names,
+                    )
+                    writer.write(annotated)
+                else:
+                    writer.write(frame)  # write unannotated to keep video length if no detections exist yet
                 continue
 
             # Run YOLO inference with ByteTrack tracking
@@ -234,6 +249,8 @@ async def main() -> None:
 
             # Update analytics
             analytics = analytics_engine.update(detections, height, width)
+            last_detections = detections
+            last_analytics = analytics
 
             # Annotate frame
             annotated = annotator.draw(
